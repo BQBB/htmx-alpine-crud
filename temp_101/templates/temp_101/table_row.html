@@ -1,0 +1,27 @@
+
+<template x-for="blog in blogs">
+    <tr>
+        <td class="w-25 pe-0 ">
+            <p x-text="blog.id"></p>
+        </td>
+        <td class=" w-30">
+            <input type="text" x-model="blog.title" required>
+              <span class="bar"></span>
+        </td>
+        <td class="w-100">
+              <input type="text" x-model="blog.description" required>
+              <span class="bar"></span>
+        </td>
+          <td>
+              <button class="btn btn-primary" @click="update_blog(blog.id, blog.title, blog.description)">
+                  Edit
+              </button>
+          </td>
+        <td>
+            <button class="btn btn-danger" @click="delete_blog(blog.id)">
+                  Delete
+              </button>
+
+        </td>
+    </tr>
+</template>

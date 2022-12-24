@@ -1,0 +1,29 @@
+<form class="card" x-data="create_blog">
+    <div class="card-header">
+      <h3 class="card-title">Enter a Blog</h3>
+    </div>
+    <div class="card-body">
+      <div class="mb-3">
+        <div class="row">
+
+          <div class="col">
+            <div class="mb-3">
+              <label class="form-label">Title</label>
+              <input class="form-control" x-model="title" placeholder="Enter Title Here ....">
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" x-model="description" rows="5"></textarea>
+        </p>
+      </div>
+
+    <div class="card-footer text-end">
+      <a href="#" class="btn btn-primary" @click="add_blog">
+        Save
+      </a>
+    </div>
+</form>
+
