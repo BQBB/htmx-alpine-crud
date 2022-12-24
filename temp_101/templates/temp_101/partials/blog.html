@@ -1,12 +1,18 @@
 <div id="msg" class="text-success" hx-swap-oob="true">blog created</div>
 <tr id="row">
-    <td>5</td>
-    <td>{{ blog.title }}</td>
-    <td>{{ blog.description }}</td>
-    <td>
-        <div class="d-flex">
-                                    <a hx-get="{% url 'blog-partial-bupdate' blog.id %}" hx-target="#row" hx-swap="outerHTML" class="text-primary">Edit</a>
-                                    <a href="{% url 'blog-delete' blog.id %}" class="text-danger">Delete</a>
-                                </div>
-    </td>
+  <td>5</td>
+  <td>{{ blog.title }}</td>
+  <td>{{ blog.description }}</td>
+  <td>
+    <div class="d-flex">
+      <a
+        hx-get="{% url 'blog-partial-bupdate' blog.id %}"
+        hx-target="#row"
+        hx-swap="outerHTML"
+        class="text-primary"
+        >Edit</a
+      >
+      <a href="{% url 'blog-delete' blog.id %}" class="text-danger">Delete</a>
+    </div>
+  </td>
 </tr>

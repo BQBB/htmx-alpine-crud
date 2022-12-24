@@ -610,7 +610,7 @@
             </div>
         </div>
     </div>
-    <div class="page-wrapper">
+    <div class="page-wrapper" x-data="tableOperations()">
         <div class="container-xl mt-4">
             {% for msg in messages %}
                 <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
@@ -734,7 +734,7 @@
 <!-- Libs JS -->
 {% include 'temp_101/scripts.html' %}
 {% block extra_scripts %}
-
+{% include 'temp_101/partials/tableOperations.html' %}
 {% endblock %}
 </body>
 </html>
