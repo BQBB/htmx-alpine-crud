@@ -1,29 +1,98 @@
-    <script>
-        function tableOperations() {
-            return {
-                show: false,
-                blogs: [],
-
-                init() {
-                    this.blogs =  [{
-                        id: 1,
-                        title: 'test',
-                        description: 'value'
-                    }, {
-                        id: 2,
-                        title: 'test',
-                        description: 'value'
-                    }]
-                },
-
-               async addBlog() {
-                    let response = await fetch('')
-                   let message = response.json()
-                   if(response.status ==200) {
-                       this.blogs.push()
-                   }
-                }
-            }
+<script>
+  function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== "") {
+      var cookies = document.cookie.split(";");
+      for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        // Does this cookie string begin with the name we want?
+        if (cookie.substring(0, name.length + 1) === name + "=") {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
         }
+      }
+    }
+    return cookieValue;
+  }
 
-    </script>
+  function tableOperations() {
+    return {
+      show: false,
+      blogs: [],
+
+      init() {
+        fetch("/get_blogs/")
+          .then((response) => response.json())
+          .then((data) => {
+            this.blogs = JSON.parse(data);
+          });
+      },
+
+      async addBlog() {
+        const title = document.querySelector("#title").value;
+        const description = document.querySelector("#description").value;
+        const url = "/blogs/";
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            title: title,
+            description: description,
+          }),
+        });
+
+        document.querySelector("#title").value = "";
+        document.querySelector("#description").value = "";
+        const data = await response.json();
+        this.blogs.push(JSON.parse(data));
+        console.log(data);
+        return false;
+      },
+
+      async deleteBlog(blog) {
+        const response = await fetch("delete_blog/" + `${blog.id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            id: blog.id 
+        }),
+        });
+        const data = await response;
+        if (data.status == 204) {
+          this.blogs.splice(this.blogs.indexOf(blog), 1);
+        }
+      },
+
+      async updateBlog(blog) {
+        const response = await fetch("update_blog/" + `${blog.id}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": getCookie("csrftoken"),
+          },
+          body: JSON.stringify({
+            title: blog.title,
+            description: blog.description 
+          }),
+        });
+        const data = await response;
+        return (this.editable = !this.editable);
+      },
+        
+      async deleteSelected(){
+        const all_blogs = this.blogs
+        filtered = all_blogs.filter(blog => blog.selected === true);
+        mapped = filtered.map(blog => delete_blog(blog));
+        await Promise.all(all_blogs);
+
+      }
+    };
+  }
+
+</script>
