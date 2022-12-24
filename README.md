@@ -1,12 +1,34 @@
 # W4-Task
 
-with **`CRUD`** opration **`Blog`** model
+with **`CRUD`** oprations on **`Blog`** model
 
 ## Routes
-by using **`Django-Ninja`**, i create a 4-routes for the **`CRUD`** opration, by using schema to validata the payload and parse the response in it, and the Router to provide an access to each endpoints
+by using **`Django-Ninja`**, i create a 4-routes for the **`CRUD`** oprations, by using schemas to validata the payload and parse the response in it, and the Router to provide an access to each endpoints
 > * check it after run on 'http://127.0.0.1:8000/api/docs'
 
+## Schema
+1. **`blog.py`**:
+```python=1
+from ninja import Schema
 
+class BlogSchema(Schema):
+    id: int
+    title: str
+    description: str
+
+
+class BlogIn(Schema):
+    title: str
+    description: str
+
+``` 
+2. **`response`**:
+```python=1
+from ninja import Schema
+
+class MessageSchema(Schema):
+    message: str
+```
 ## templates 
 1. i create **`table_form.html`** **`table.html`**,and **`table_row.html`** for design the page.
 2. in **`/partials/`** i update in **`table_opereations`** by adding:
