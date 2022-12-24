@@ -8,7 +8,7 @@ by using **`Django-Ninja`**, i create a 4-routes for the **`CRUD`** oprations, b
 
 ## Schema
 1. **`blog.py`**:
-```python=1
+```python
 from ninja import Schema
 
 class BlogSchema(Schema):
@@ -23,7 +23,7 @@ class BlogIn(Schema):
 
 ``` 
 2. **`response`**:
-```python=1
+```python
 from ninja import Schema
 
 class MessageSchema(Schema):
@@ -43,7 +43,7 @@ class MessageSchema(Schema):
 in Alpine code, i check if the response is success or not depending on **`message`** i sent from the backend with the response schema, cause i didn't know how to access **`status code`** (**`cause it is my first time in django- ninja`**)
     so the code become:
     
-```javascript=1
+```javascript
 if (response.message === "Ok"){
     this.msg = 'deleted'
 }
@@ -53,13 +53,13 @@ else{
 ```
 
 **`i try`** : 
-```javascript=1
+```javascript
 if (response.status >= 200 && response.status < 300){
     this.msg = 'deleted'
 }
 ```
 **`and `**
-```javascript=1
+```javascript
 if (response.statusCode >= 200 && response.statusCode < 300){
     this.msg = 'deleted'
 }
