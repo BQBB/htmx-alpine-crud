@@ -1,103 +1,62 @@
-from http.client import HTTPResponse
+import json
+from django.middleware.csrf import get_token
 
 from django.contrib import messages
-from django.http import HttpResponse
-from django.shortcuts import render, redirect, get_object_or_404
-from django.urls import reverse
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
+from django.views.decorators.http import require_http_methods
 
-from temp_101.forms import BlogForm
 from temp_101.models import Blog
 
 
 def index(request):
-    print(Blog.objects.all().values('id', 'title', 'description'))
-    return render(request, 'temp_101/index.html', {
-        'blogs': Blog.objects.all()
-    })
+    return render(request, 'temp_101/index.html')
+
+@require_http_methods(['GET'])
+def get_csrf_token(request):
+    csrf_token = get_token(request)
+    return JsonResponse({'csrfToken': csrf_token})
 
 
+@require_http_methods(['GET'])
+def getBlogs(request):
+    try:
+        a = Blog.objects.values('id', 'title', 'description')
+        return JsonResponse(json.dumps(list(a)), safe=False)
+    except:
+        return HttpResponse(status=401)
+
+
+@require_http_methods(['POST'])
 def blog_create(request):
-    blog_form = BlogForm(request.POST or None)
-    if request.method == 'POST' and blog_form.is_valid():
-        blog_form.save()
-        messages.success(request, 'blog created successfully!')
-        return redirect('index')
+    try:
+        data = json.loads(request.body)
+        Blog.objects.create(title=data['title'], description=data['description']).save()
+        a = Blog.objects.values().last()
+        return JsonResponse(json.dumps(a), safe=False)
+    except:
+        return HttpResponse(status=405)
 
-    return render(request, 'temp_101/blog_create.html', {
-        'form': blog_form
-    })
+@require_http_methods(['PUT'])
+def blog_update(request, id):
+    try:
+        blog = Blog.objects.get(id=id)
+        data = json.loads(request.body)
+        title = data['title']
+        description = data['description']
+        blog.title = title
+        blog.description = description
+        blog.save()
+        return HttpResponse(status=204)
+    except:
+        return HttpResponse(status=405)
 
-
-def blog_view(request, id):
-    blog = Blog.objects.get(id=id)
-    blog_form = BlogForm(request.POST or None, instance=blog)
-    if request.method == 'POST' and blog_form.is_valid():
-        blog_form.save()
-        messages.success(request, 'blog updated successfully!')
-        return redirect('index')
-
-    return render(request, 'temp_101/blog_update.html', {
-        'form': blog_form
-    })
-
-
+@require_http_methods(['DELETE'])
 def blog_delete(request, id):
-    blog = Blog.objects.get(id=id)
-    blog.delete()
-    messages.success(request, 'blog deleted successfully!')
-    return redirect('index')
-
-
-def blog_render(request, id):
-    blog = Blog.objects.get(id=id)
-    return render(request, 'temp_101/partials/blog.html', {
-        'blog': blog
-    })
-
-
-def blog_partial_create(request):
-    title = request.POST.get('title')
-    desc = request.POST.get('description')
-    blog = Blog(
-        title=title,
-        description=desc
-    )
-
-    blog.save()
-    return render(request, 'temp_101/partials/blog.html', {
-        'blog': blog
-    })
-
-
-def blog_partial_aupdate(request, id):
-    print(request.POST)
-    blog = Blog.objects.get(id=id)
-    title = request.POST.get('title')
-    desc = request.POST.get('description')
-    blog.title = title
-    blog.description = desc
-    blog.save()
-    return render(request, 'temp_101/partials/blog.html', {
-        'blog': blog
-    })
-
-
-def blog_partial_bupdate(request, id):
-    blog = Blog.objects.get(id=id)
-    return render(request, 'temp_101/partials/blog_update.html', {
-        'blog': blog
-    })
-
-
-def blog_partial_delete(request, id):
-    blog = Blog.objects.get(id=id)
-    blog.delete()
-    return HttpResponse('')
-
-
-def blog_partial_delete_all(request):
-    inputs = request.POST.getlist('id')
-    Blog.objects.filter(id__in=inputs).delete()
-    response = HttpResponse('')
-    response['HX-Redirect'] = reverse('index')
-    return response
+    try:
+        blog = Blog.objects.get(id=id)
+        blog.delete()
+        messages.success(request, 'blog deleted successfully!')
+        return HttpResponse(status=204)
+    except:
+        return HttpResponse(status=405)
