@@ -1,6 +1,11 @@
-from django.urls import path, include
-
+from django.urls import path
 from temp_101 import views
+from ninja import NinjaAPI
+from .APIs import router as blog_router
+
+api = NinjaAPI()
+api.add_router('/blog/', blog_router)
+
 urlpatterns = [
     path('', views.index, name="index"),
     path('blog/create/', views.blog_create, name="blog-create"),
@@ -12,4 +17,5 @@ urlpatterns = [
     path('blog/partial-aupdate/<id>/', views.blog_partial_aupdate, name="blog-partial-aupdate"),
     path('blog/partial-delete/<id>/', views.blog_partial_delete, name="blog-partial-delete"),
     path('blog/partial-delete-all/', views.blog_partial_delete_all, name="blog-partial-delete_all"),
+    path('api/', api.urls)
 ]

@@ -10,9 +10,8 @@ from temp_101.models import Blog
 
 
 def index(request):
-    print(Blog.objects.all().values('id', 'title', 'description'))
     return render(request, 'temp_101/index.html', {
-        'blogs': Blog.objects.all()
+        'blogs': Blog.objects.all().values('id', 'title', 'description')
     })
 
 

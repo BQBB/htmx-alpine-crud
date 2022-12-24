@@ -1,0 +1,27 @@
+<div class="row">
+<p class="fs-3 text-success" x-text="msg">
+
+</p>
+<p class="fs-3 text-danger" x-text="error_msg">
+
+</p>
+</div>
+<div class="card">
+  <div class="table-responsive">
+    <table class="table card-table table-vcenter">
+            <thead>
+                <tr>
+                    <th class="fs-6">Status</th>
+                    <th class="fs-6">Title</th>
+                    <th class="fs-6">Description</th>
+                    <th class="fs-6" colspan="2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% include 'temp_101/table_row.html' %}
+            </tbody>
+        <tbody>
+        </tbody>
+    </table>
+  </div>
+</div>

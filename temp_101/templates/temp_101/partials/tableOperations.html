@@ -1,29 +1,72 @@
-    <script>
-        function tableOperations() {
-            return {
-                show: false,
-                blogs: [],
+<script>
+    const get_blogs = () => {
+        return {
+            blogs: [],
+            delete_button: false,
+            msg: '',
+            error_msg: '',
+            async init(){
+                this.blogs = await fetch('http://127.0.0.1:8000/api/blog/', {
+                    method: "GET"
+                }).then(response => response.json())
+            },
+            async delete_blog(id){
+                let response = await fetch(`http://127.0.0.1:8000/api/blog/${id}`,{
+                    method: "DELETE"
+                }).then(response => response.json())
+                this.blogs = await fetch('http://127.0.0.1:8000/api/blog/').then(response => response.json())
+                if (response.message === "Ok"){
+                    this.msg = 'deleted'
+                }
+                else{
+                    this.error_msg = 'there was an error !!'
+                }
+            },
+            async update_blog(id, title, des){
+                console.log(des)
+                let response = await fetch('http://127.0.0.1:8000/api/blog/', {
+                    method: "PUT",
+                    body: JSON.stringify({
+                        id:id,
+                        title: title,
+                        description: des
+                    })
+                }).then(response => response.json())
+                this.blogs = await fetch('http://127.0.0.1:8000/api/blog/').then(response => response.json())
+                if (response.message === "Ok"){
+                    this.msg = 'updated'
+                }
+                else{
+                    this.error_msg = 'there was an error !!'
+                }
+            },
+            create_blog(){
+                return{
+                    title: String,
+                    description: String,
+                    async add_blog(){
+                        let response = await fetch('http://127.0.0.1:8000/api/blog/', {
+                            method: "POST",
+                            body: JSON.stringify({
+                                "title": this.title,
+                                "description": this.description
+                            })
+                        }).then(response => response.json())
+                        console.log(response.message)
+                        if (response.message === "Ok"){
+                            this.msg = 'created'
+                        }
+                        else{
+                            this.error_msg = 'there was an error !!'
+                        }
+                        this.title = ''
+                        this.description = ''
+                        this.blogs = await fetch('http://127.0.0.1:8000/api/blog/').then(response => response.json())
 
-                init() {
-                    this.blogs =  [{
-                        id: 1,
-                        title: 'test',
-                        description: 'value'
-                    }, {
-                        id: 2,
-                        title: 'test',
-                        description: 'value'
-                    }]
-                },
-
-               async addBlog() {
-                    let response = await fetch('')
-                   let message = response.json()
-                   if(response.status ==200) {
-                       this.blogs.push()
-                   }
+                    }
                 }
             }
         }
+    }
 
-    </script>
+</script>
