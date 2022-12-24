@@ -3,27 +3,99 @@
             return {
                 show: false,
                 blogs: [],
-
                 init() {
-                    this.blogs =  [{
-                        id: 1,
-                        title: 'test',
-                        description: 'value'
-                    }, {
-                        id: 2,
-                        title: 'test',
-                        description: 'value'
-                    }]
+                    const url = '/blog/getAll';
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => {
+                            searchResults = data;
+                            this.blogs=JSON.parse(searchResults);
+                        });
                 },
 
-               async addBlog() {
-                    let response = await fetch('')
-                   let message = response.json()
-                   if(response.status ==200) {
-                       this.blogs.push()
-                   }
+               async addBlog(x,csrf_token) {
+                     const url = '/blog/create/';
+                      const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json',
+                            "X-CSRFToken": `${csrf_token}`
+                        },
+                        body: JSON.stringify({ title: x.title, description: x.description }),
+                      });
+                      const data = await response.json();
+                        this.blogs.push(JSON.parse(data));
+
+
+                    },
+                      async deleteBlog(x,csrf_token) {
+                        const url = '/blog/delete/';
+                        const response = await fetch(url+`${x.id}/`, {
+                            method: 'DELETE',
+                            headers: {
+                            'Content-Type': 'application/json',
+                                "X-CSRFToken": `${csrf_token}`
+                            },
+                            body: JSON.stringify({ id: x.id }),
+                        });
+                        const data = await response;
+                        if (data.status==204){
+                            this.blogs.splice(this.blogs.indexOf(x),1);
+                            this.editing=false;
+                        }
+
+                   },
+                   async updateBlog(x,csrf_token){
+                        const url = '/blog/update/';
+                        const response = await fetch(url+`${x.id}/`, {
+                            method: 'PUT',
+                            headers: {
+                            'Content-Type': 'application/json',
+                                "X-CSRFToken": `${csrf_token}`
+                            },
+                            body: JSON.stringify({ title: x.title, description: x.description }),
+                        });
+                        const data = await response;
+
+                        if (data.status==204){
+                            return this.editing=false;
+
+                        }
+                   },
+                   async deleteSelected(csrf_token){
+
+                    const deletePromises = this.blogs
+                    .filter(blog => blog.selected)
+                    .map(blog =>  this.deleteBlog(blog, csrf_token));
+                    await Promise.all(deletePromises);
+                        },
+                    checkAll(){
+                    inputs = document.getElementsByName('id')
+                    this.source=!this.source;
+                    for (let i =0; i< inputs.length; i++) {
+                        inputs[i].checked = this.source
+                        this.blogs[i].selected=this.source
+                    }
                 }
-            }
+
+                    }
         }
 
     </script>
+<script>
+     function fetchCsrfToken() {
+         return {
+             csrfToken: 'ff',
+             init() {
+                const url = '/blog/get-csrf-token';
+                fetch(url)
+               .then(response => response.json())
+                 .then(data => {
+                 this.csrfToken = data.csrfToken;
+
+            });
+             }
+         }
+
+    }
+</script>
