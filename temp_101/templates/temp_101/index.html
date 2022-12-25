@@ -16,6 +16,9 @@
             <input type="text" x-model="description">
             <button x-on:click="createBlog">create blog</button>
         </div>
+        <div>
+            <button x-on:click="deleteMultipleBlogs">delete all</button>
+        </div>
         <div class="card">
             <div class="table-responsive">
                 <table class="table table-vcenter card-table">
@@ -31,7 +34,7 @@
                     <tbody id="tbody"  x-init="$nextTick(getBlogs())">
                     <template x-for="(blog, index) in blogs" :key="blog.id">
                         <tr id="row">
-                        <td><input type="checkbox" name="id" :value="blog.id"></td>
+                        <td><input type="checkbox" name="id" :value="blog.id" x-on:click="addBlogID(blog.id)"></td>
                         <td>
                             <input type="text" x-model="blog.title">
                         </td>

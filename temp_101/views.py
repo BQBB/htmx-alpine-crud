@@ -83,24 +83,6 @@ def blog_partial_create(request):
     })
 
 
-# def blog_partial_aupdate(request, id):
-#     print(request.POST)
-#     blog = Blog.objects.get(id=id)
-#     title = request.POST.get('title')
-#     desc = request.POST.get('description')
-#     blog.title = title
-#     blog.description = desc
-#     blog.save()
-#     return render(request, 'temp_101/partials/blog.html', {
-#         'blog': blog
-#     })
-#
-#
-# def blog_partial_bupdate(request, id):
-#     blog = Blog.objects.get(id=id)
-#     return render(request, 'temp_101/partials/blog_update.html', {
-#         'blog': blog
-#     })
 
 
 def blog_partial_delete(request, id):
@@ -110,8 +92,6 @@ def blog_partial_delete(request, id):
 
 
 def blog_partial_delete_all(request):
-    inputs = request.POST.getlist('id')
-    Blog.objects.filter(id__in=inputs).delete()
-    response = HttpResponse('')
-    response['HX-Redirect'] = reverse('index')
-    return response
+    json_body = json.loads(request.body)
+    Blog.objects.filter(id__in=json_body["ids"]).delete()
+    return JsonResponse({'status': 204, 'message': 'blog deleted successfully!'})

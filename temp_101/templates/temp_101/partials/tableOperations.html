@@ -86,6 +86,33 @@
             console.log(error);
           });
       },
+        async deleteMultipleBlogs() {
+            console.log(this.blogIDS);
+            CSRFToken = getCookie("csrftoken");
+            axios
+            .delete('http://127.0.0.1:8000/blog/delete/all', {
+                headers: { "X-CSRFToken": CSRFToken },
+                data: { ids: this.blogIDS },
+            })
+            .then((response) => {
+                if (response.data.status == 204) {
+                this.blogs = this.blogs.filter(
+                    (blog) => !this.blogIDS.includes(blog.id)
+                );
+                this.blogIDS = [];
+                } else {
+                alert(response.data.message);
+                }
+            })
+        },
+        async addBlogID(id) {
+            if (this.blogIDS.includes(id)) {
+                this.blogIDS = this.blogIDS.filter((blogID) => blogID !== id);
+            } else {
+                this.blogIDS.push(id);
+                console.log(this.blogIDS);
+            }
+        },
     };
   }
 </script>

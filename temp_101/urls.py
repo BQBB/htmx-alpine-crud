@@ -10,5 +10,5 @@ urlpatterns = [
     path('blog/', views.blog_render_all, name="blog-render-all"),
     path('blog/partial-create/', views.blog_partial_create, name="blog-partial-create"),
     path('blog/partial-delete/<id>/', views.blog_partial_delete, name="blog-partial-delete"),
-    path('blog/partial-delete-all/', views.blog_partial_delete_all, name="blog-partial-delete_all"),
+    path('blog/delete/all', views.blog_partial_delete_all, name="blog-partial-delete_all"),
 ]
