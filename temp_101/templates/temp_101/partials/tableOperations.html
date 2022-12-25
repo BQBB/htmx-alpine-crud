@@ -1,29 +1,92 @@
-    <script>
-        function tableOperations() {
-            return {
-                show: false,
-                blogs: [],
+<script>
+    function getCookie(cookieName) {
+    let cookie = {};
+    document.cookie.split(';').forEach(function(el) {
+    let [key,value] = el.split('=');
+         cookie[key.trim()] = value;
+    })
+    return cookie[cookieName];
+    }
 
-                init() {
-                    this.blogs =  [{
-                        id: 1,
-                        title: 'test',
-                        description: 'value'
-                    }, {
-                        id: 2,
-                        title: 'test',
-                        description: 'value'
-                    }]
-                },
-
-               async addBlog() {
-                    let response = await fetch('')
-                   let message = response.json()
-                   if(response.status ==200) {
-                       this.blogs.push()
-                   }
+    function tableOperations() {
+        return {
+            show: false,
+            title: '',
+            description: '',
+            blogs: [],
+            async createBlog(){
+                CSRFToken = getCookie('csrftoken')
+                params = {
+                    title: this.title,
+                    description: this.description,
                 }
-            }
-        }
+                axios.post('http://127.0.0.1:8000/blog/create/', params,
+                  {
+                      headers: {'X-CSRFToken': CSRFToken},
+                  })
+                    .then(response => {
+                        if (response.data.status == 201) {
+                            this.blogs.push({
+                                id: this.blogs.length + 1,
+                                title: this.title,
+                                description: this.description,
+                            })
+                            this.title = ''
+                            this.description = ''
+                        } else {
+                            alert(response.data.message)
+                        }
 
-    </script>
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            },
+             async getBlogs() {
+             let request = await fetch('http://127.0.0.1:8000/blog/')
+                this.blogs = await request.json()
+            },
+
+            async deleteBlog(id) {
+                CSRFToken = getCookie('csrftoken')
+                axios.delete(`http://127.0.0.1:8000/blog/delete/${id}/`, {
+                    headers: {'X-CSRFToken': CSRFToken},
+                })
+                    .then(response => {
+                        if (response.data.status == 204) {
+                            this.blogs = this.blogs.filter(blog => blog.id !== id)
+                        } else {
+                            console.log('error in delete')
+                        }
+                    })
+                    .catch(error => {
+                        alert(response.data.message)
+                    })
+        },
+        async editBlog(payload) {
+            CSRFToken = getCookie('csrftoken')
+            axios.put(`http://127.0.0.1:8000/blog/update/${payload.id}/`, payload, {
+                headers: {'X-CSRFToken': CSRFToken},
+            })
+                .then(response => {
+                    if (response.data.status == 200) {
+                        this.blogs = this.blogs.map(blog => {
+                            if (blog.id === payload.id) {
+                                blog.title = payload.title
+                                blog.description = payload.description
+                            }
+                            return blog
+                        })
+                    } else {
+                        alert(response.data.message)
+                    }
+                })
+                .catch(error => {
+                    console.log(error)
+                })
+
+        }
+    }
+}
+
+</script>

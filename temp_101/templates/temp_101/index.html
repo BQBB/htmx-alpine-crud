@@ -3,68 +3,54 @@
 
 {% block content %}
 
-    <button hx-post="{% url 'blog-partial-delete_all' %}" hx-include="input[name='id']">delete all</button>
-    <form>
-        {% csrf_token %}
-        <input type="text" name="title" id=""><br>
-        <textarea name="description" id="" cols="30" rows="10"></textarea><br>
-        <button hx-post="{% url 'blog-partial-create' %}" hx-target="#tbody" hx-swap="beforeend">create blog</button>
-    </form>
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table table-vcenter card-table" x-data="tableOperations()">
-                <thead>
-                <tr>
-                    <th><input type="checkbox" onclick="checkAll(this)"></th>
-                    <th>Title</th>
-                    <th>Description</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
+{#    <button hx-post="{% url 'blog-partial-delete_all' %}" hx-include="input[name='id']">delete all</button>#}
+{#    <form>#}
+{#        {% csrf_token %}#}
+{#        <input type="text" name="title" id=""><br>#}
+{#        <textarea name="description" id="" cols="30" rows="10"></textarea><br>#}
+{#        <button hx-post="{% url 'blog-partial-create' %}" hx-target="#tbody" hx-swap="beforeend">create blog</button>#}
+{#    </form>#}
+    <div x-data = "tableOperations()">
+        <div class="input">
+            <input type="text" x-model="title">
+            <input type="text" x-model="description">
+            <button x-on:click="createBlog">create blog</button>
+        </div>
+        <div class="card">
+            <div class="table-responsive">
+                <table class="table table-vcenter card-table">
+                    <thead>
+                    <tr>
+                        <th><input type="checkbox" onclick="checkAll(this)"></th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
 
-                <tbody id="tbody">
-                <template x-for="(blog, index) in blogs" :key="blog.id">
-                    <tr id="row">
-                                        <td><input type="checkbox" name="id" :value="blog.id"></td>
-                                        <td>
-                                            <input type="text" x-model="blog.title">
-                                        </td>
-                                        <td x-text="blog.description"></td>
-                                        <td>
-                                            <div class="d-flex">
-                                                <a :hx-get="'{% url 'blog-partial-bupdate' 0 %}'.replace(0, blog.id)" hx-target="#row"
-                                                   hx-swap="outerHTML" class="text-primary" @click="addBlog">Edit</a>
-                                                <a hx-delete="{% url 'blog-partial-delete' 0 %}" hx-target="#row"
-                                                   hx-swap="outerHTML" class="text-danger" hx-confirm="are you sure!">Delete</a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                </template>
+                    <tbody id="tbody"  x-init="$nextTick(getBlogs())">
+                    <template x-for="(blog, index) in blogs" :key="blog.id">
+                        <tr id="row">
+                        <td><input type="checkbox" name="id" :value="blog.id"></td>
+                        <td>
+                            <input type="text" x-model="blog.title">
+                        </td>
+                        <td>
+                            <input type="text" x-model="blog.description">
+                        </td>
+                        <td>
+                            <div class="d-flex">
+                                <button class = "btn btn-primary" x-on:click="editBlog(blog)">Edit</button>
+                                <button class="btn btn-danger" x-on:click="deleteBlog(blog.id)">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    </template>
 
+                    </tbody>
 
-                {#                {% for blog in blogs %}#}
-                {#                    <tr id="row">#}
-                {#                        <td><input type="checkbox" name="id" value="{{ blog.id }}"></td>#}
-                {#                        <td>{{ blog.title }}</td>#}
-                {#                        <td>{{ blog.description|truncatewords:80 }}</td>#}
-                {#                        <td>#}
-                {#                            <div class="d-flex">#}
-                {#                                <a hx-get="{% url 'blog-partial-bupdate' blog.id %}" hx-target="#row"#}
-                {#                                   hx-swap="outerHTML" class="text-primary">Edit</a>#}
-                {#                                <a hx-delete="{% url 'blog-partial-delete' blog.id %}" hx-target="#row"#}
-                {#                                   hx-swap="outerHTML" class="text-danger" hx-confirm="are you sure!">Delete</a>#}
-                {#                            </div>#}
-                {#                        </td>#}
-                {#                    </tr>#}
-                {#                {% empty %}#}
-                {#                    <tr>#}
-                {#                        <td colspan="4" class="text-center">there is no blogs yet</td>#}
-                {#                    </tr>#}
-                {#                {% endfor %}#}
-
-                </tbody>
-
-            </table>
+                </table>
+            </div>
         </div>
     </div>
 {% endblock %}
